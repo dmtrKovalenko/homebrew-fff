@@ -1,0 +1,38 @@
+name: Sync formula from fff.nvim
+
+on:
+  schedule:
+    - cron: "0 * * * *" # hourly
+  workflow_dispatch: {} # allow manual runs
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-formula
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Fetch latest formula from fff.nvim
+        run: |
+          curl -fsSL \
+            https://raw.githubusercontent.com/dmtrKovalenko/fff.nvim/main/Formula/fff-mcp.rb \
+            -o Formula/fff-mcp.rb
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- Formula/fff-mcp.rb; then
+            echo "Formula already up to date; nothing to sync."
+            exit 0
+          fi
+          version="$(sed -n 's/^  version "\(.*\)"$/\1/p' Formula/fff-mcp.rb | head -1)"
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add Formula/fff-mcp.rb
+          git commit -m "chore: sync fff-mcp formula to v${version:-latest}"
+          git push

@@ -7,4 +7,4 @@ brew tap dmtrKovalenko/fff
 brew install dmtrKovalenko/fff/fff-mcp
 ```
 
-The formula here is auto-synced from the [`fff.nvim`](https://github.com/dmtrKovalenko/fff.nvim) repo on every stable release. Do not edit it by hand.
+The formula here is auto-synced hourly from [`fff.nvim`](https://github.com/dmtrKovalenko/fff.nvim) by [`.github/workflows/sync-formula.yml`](./.github/workflows/sync-formula.yml). Do not edit it by hand.
